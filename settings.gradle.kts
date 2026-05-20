@@ -24,4 +24,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "Vestiaire"
 include(":app")
-include(":crudclient")
