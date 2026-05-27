@@ -1,35 +1,29 @@
 package com.example.vestiaire
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.Firebase
-import com.google.firebase.database.database
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var auth: FirebaseAuth
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
-        // Ambil instance database
-        val database = Firebase.database
+        auth = FirebaseAuth.getInstance()
 
-        // Reference node
-        val myRef = database.getReference("message")
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
 
-        // Simpan data
-        myRef.setValue("Hello, World!")
+        btnLogout.setOnClickListener {
 
-        // Ambil data
-        myRef.get().addOnSuccessListener {
+            auth.signOut()
 
-            Log.d("FIREBASE", it.value.toString())
-
-        }.addOnFailureListener {
-
-            Log.e("FIREBASE", "Error", it)
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
 
         }
     }
