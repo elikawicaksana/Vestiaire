@@ -50,27 +50,38 @@ class MainActivity : AppCompatActivity() {
         }
 
         fabAdd.setOnClickListener {
-            Toast.makeText(this, "Will redirect to Add Clothing page later", Toast.LENGTH_SHORT).show()
-            // startActivity(Intent(this, AddClothingActivity::class.java))
+//            Toast.makeText(this, "Will redirect to Add Clothing page later", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, AddClothingActivity::class.java))
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        fetchClothingData()
+    }
+
     private fun fetchClothingData() {
-        // Fetching from "clothes" collection in Firestore
-        db.collection("clothes")
-            .get()
-            .addOnSuccessListener { result ->
-                clothingList.clear() // Clear list before repopulating
-                for (document in result) {
-                    val clothingItem = document.toObject(ClothingItem::class.java)
-                    clothingItem.id = document.id
-                    clothingList.add(clothingItem)
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            db.collection("clothes")
+                .whereEqualTo("userId", currentUser.uid)
+                .get()
+                .addOnSuccessListener { result ->
+                    clothingList.clear()
+
+                    for (document in result) {
+                        val clothingItem = document.toObject(ClothingItem::class.java)
+                        clothingItem.id = document.id
+                        clothingList.add(clothingItem)
+                    }
+
+                    adapter.notifyDataSetChanged()
                 }
-                adapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener { exception ->
-                Log.w("FIRESTORE", "Error getting documents.", exception)
-                Toast.makeText(this, "Failed to fetch data", Toast.LENGTH_SHORT).show()
-            }
+                .addOnFailureListener { exception ->
+                    Log.w("FIRESTORE", "Error getting documents.", exception)
+                    Toast.makeText(this, "Failed to fetch data", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 }
