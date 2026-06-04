@@ -4,13 +4,6 @@
     android:layout_height="match_parent"
     android:padding="16dp">
 
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="Logout" />
-
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
@@ -20,6 +13,21 @@
         android:text="Clothing Catalog"
         android:textSize="22sp"
         android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/btnLogout"
+        android:layout_marginEnd="8dp"
+        android:text="Profile" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:text="Logout" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvClothing"

@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 class SignupActivity : AppCompatActivity() {
 
@@ -19,6 +20,7 @@ class SignupActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        val etUsername = findViewById<EditText>(R.id.etUsername)
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnSignup = findViewById<Button>(R.id.btnSignup)
@@ -26,6 +28,7 @@ class SignupActivity : AppCompatActivity() {
 
         btnSignup.setOnClickListener {
 
+            val username = etUsername.text.toString().trim()
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
@@ -39,10 +42,20 @@ class SignupActivity : AppCompatActivity() {
 
                     if (task.isSuccessful) {
 
-                        Toast.makeText(this, "Sign Up berhasil", Toast.LENGTH_SHORT).show()
+                        val uid = auth.currentUser!!.uid
 
-                        startActivity(Intent(this, LoginActivity::class.java))
-                        finish()
+                        FirebaseDatabase.getInstance()
+                            .getReference("users")
+                            .child(uid)
+                            .child("username")
+                            .setValue(username)
+
+                        Toast.makeText(
+                            this,
+                            "Sign Up berhasil",
+                            Toast.LENGTH_SHORT
+                        ).show()
+
 
                     } else {
 

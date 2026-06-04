@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         // 2. Connect UI
         val btnLogout = findViewById<Button>(R.id.btnLogout)
         val fabAdd = findViewById<FloatingActionButton>(R.id.fabAdd)
+        val btnProfile = findViewById<Button>(R.id.btnProfile)
         rvClothing = findViewById(R.id.rvClothing)
 
         // 3. Setup RecyclerView
@@ -47,6 +48,11 @@ class MainActivity : AppCompatActivity() {
             auth.signOut()
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
+        }
+        btnProfile.setOnClickListener {
+            startActivity(
+                Intent(this, ProfileActivity::class.java)
+            )
         }
 
         fabAdd.setOnClickListener {
