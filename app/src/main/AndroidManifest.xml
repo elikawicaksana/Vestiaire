@@ -32,6 +32,9 @@
         <activity
             android:name=".AddClothingActivity"
             android:exported="false" />
+        <activity
+            android:name=".ClothingDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

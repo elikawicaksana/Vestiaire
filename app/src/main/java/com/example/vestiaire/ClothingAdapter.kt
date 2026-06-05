@@ -31,6 +31,20 @@ class ClothingAdapter(private val clothingList: List<ClothingItem>) :
             .load(clothing.imageUrl)
             .placeholder(android.R.drawable.ic_menu_gallery) // Placeholder while loading
             .into(holder.ivImage)
+
+        // Taruh kode ini di baris terakhir di dalam fungsi onBindViewHolder milikmu
+        holder.itemView.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = android.content.Intent(context, ClothingDetailActivity::class.java).apply {
+                putExtra("CLOTHING_ID", clothing.id)
+                putExtra("CLOTHING_NAME", clothing.name)
+                putExtra("CLOTHING_COLOR", clothing.color)
+                putExtra("CLOTHING_CATEGORY", clothing.category)
+                putExtra("CLOTHING_OCCASION", clothing.occasion)
+                putExtra("CLOTHING_IMAGE_URL", clothing.imageUrl)
+            }
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int {
