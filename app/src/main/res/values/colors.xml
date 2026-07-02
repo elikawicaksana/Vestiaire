@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="vestiaire_primary">#1E1E24</color>
+    <color name="vestiaire_secondary">#7D9D7C</color>
+    <color name="vestiaire_gold">#C8A96A</color>
+    <color name="vestiaire_background">#F8F7F5</color>
+    <color name="vestiaire_surface">#FFFFFF</color>
+    <color name="vestiaire_text">#1A1A1A</color>
+    <color name="vestiaire_subtext">#707070</color>
+    <color name="vestiaire_error">#D9534F</color>
 </resources>

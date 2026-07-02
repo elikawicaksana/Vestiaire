@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -16,7 +17,7 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var etUsername: EditText
     private lateinit var etEmail: EditText
-
+    private lateinit var tvName: TextView
     private lateinit var btnUpdate: Button
     private lateinit var btnLogout: Button
 
@@ -30,6 +31,7 @@ class ProfileActivity : AppCompatActivity() {
         // Komponen UI
         etUsername = findViewById(R.id.etUsername)
         etEmail = findViewById(R.id.etEmail)
+        tvName = findViewById(R.id.tvName)
 
         btnUpdate = findViewById(R.id.btnUpdate)
         btnLogout = findViewById(R.id.btnLogout)
@@ -67,6 +69,12 @@ class ProfileActivity : AppCompatActivity() {
                     snapshot.getValue(String::class.java)
 
                 etUsername.setText(username)
+                // 2. Tampilkan sebagai teks nama user biasa jika datanya tidak kosong
+                if (!username.isNullOrEmpty()) {
+                    tvName.text = "$username 👋"
+                } else {
+                    tvName.text = "User 👋" // Cadangan jika username di database kosong
+                }
             }
     }
 
@@ -119,6 +127,10 @@ class ProfileActivity : AppCompatActivity() {
             .child(currentUser.uid)
             .child("username")
             .setValue(username)
+            .addOnSuccessListener {
+                // Langsung ubah teks nama di atas secara real-time
+                tvName.text = "$username 👋"
+            }
 
         // Update email
         currentUser.verifyBeforeUpdateEmail(newEmail)
