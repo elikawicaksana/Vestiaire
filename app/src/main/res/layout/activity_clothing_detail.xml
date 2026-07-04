@@ -1,70 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/vestiaire_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="24dp">
 
         <Button
             android:id="@+id/btnBack"
+            style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Back to Catalog"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
+            android:textColor="@color/vestiaire_primary"
+            app:iconTint="@color/vestiaire_primary"
+            app:icon="@android:drawable/ic_menu_revert" />
 
         <TextView
             android:id="@+id/tvDetailTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
             android:text="Clothing Detail"
             android:textAlignment="center"
             android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/vestiaire_text" />
 
-        <ImageView
-            android:id="@+id/ivDetailPreview"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="250dp"
-            android:background="#E0E0E0"
-            android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery" />
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#E0E0E0"
+            app:cardBackgroundColor="@color/vestiaire_surface">
 
-        <EditText
-            android:id="@+id/etDetailName"
+            <ImageView
+                android:id="@+id/ivDetailPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F5F5F5"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- INPUT CLOTHING NAME -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:hint="Clothing Name"
+            app:startIconDrawable="@android:drawable/ic_menu_agenda"
+            app:startIconTint="@color/vestiaire_subtext"
+            app:hintTextColor="@color/vestiaire_primary"
+            app:boxStrokeColor="@color/vestiaire_primary">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDetailName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/vestiaire_text"
+                android:textColorHint="@color/vestiaire_subtext"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- INPUT COLOR -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="Clothing Name"
-            android:inputType="text"
-            android:enabled="false" />
-
-        <EditText
-            android:id="@+id/etDetailColor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:hint="Color"
-            android:inputType="text"
-            android:enabled="false" />
+            app:startIconDrawable="@android:drawable/ic_menu_manage"
+            app:startIconTint="@color/vestiaire_subtext"
+            app:hintTextColor="@color/vestiaire_primary"
+            app:boxStrokeColor="@color/vestiaire_primary">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etDetailColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:textColor="@color/vestiaire_text"
+                android:textColorHint="@color/vestiaire_subtext"
+                android:enabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- SEKSI KATEGORI -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Category:"
+            android:layout_marginTop="20dp"
+            android:text="Category"
+            android:textColor="@color/vestiaire_subtext"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvDetailCategory"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:textSize="16sp"
+            android:textColor="@color/vestiaire_text"
             android:text="Category Name"
             android:visibility="visible" />
 
@@ -73,21 +121,27 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="4dp"
+            android:background="@android:drawable/btn_dropdown"
             android:visibility="gone" />
 
+        <!-- SEKSI OCCASION -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Occasion:"
+            android:layout_marginTop="16dp"
+            android:text="Occasion"
+            android:textColor="@color/vestiaire_subtext"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tvDetailOccasion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp"
             android:textSize="16sp"
+            android:textColor="@color/vestiaire_text"
             android:text="Occasion Name"
             android:visibility="visible" />
 
@@ -96,53 +150,65 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginTop="4dp"
+            android:background="@android:drawable/btn_dropdown"
             android:visibility="gone" />
 
+        <!-- ==================== MODE BACA (READ MODE) ==================== -->
         <LinearLayout
             android:id="@+id/layoutReadMode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:visibility="visible">
 
             <Button
                 android:id="@+id/btnEditMode"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Edit Clothing Info" />
+                android:layout_height="56dp"
+                android:text="Edit Clothing Info"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/vestiaire_primary"
+                android:textColor="@color/vestiaire_surface" />
 
             <Button
                 android:id="@+id/btnDelete"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="Delete Clothing"
-                android:backgroundTint="#F44336" />
+                android:textColor="@color/vestiaire_error" />
         </LinearLayout>
 
+        <!-- ==================== MODE EDIT (EDIT MODE) ==================== -->
         <LinearLayout
             android:id="@+id/layoutEditMode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:visibility="gone">
 
             <Button
                 android:id="@+id/btnUpdate"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:text="Save Changes"
-                android:backgroundTint="#4CAF50" />
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:backgroundTint="@color/vestiaire_secondary"
+                android:textColor="@color/vestiaire_surface" />
 
             <Button
                 android:id="@+id/btnCancel"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_marginTop="8dp"
                 android:text="Cancel Edit"
-                android:backgroundTint="#757575" />
+                android:textColor="@color/vestiaire_text" />
         </LinearLayout>
 
     </LinearLayout>

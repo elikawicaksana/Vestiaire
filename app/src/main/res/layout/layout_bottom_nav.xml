@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomBarContainer"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_gravity="bottom"
+    app:cardBackgroundColor="@color/vestiaire_surface"
+    app:cardElevation="16dp"
+    app:cardCornerRadius="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#EAEAEA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:baselineAligned="false">
+
+        <!-- SISI KIRI: MENU ADD (+) -->
+        <LinearLayout
+            android:id="@+id/layoutMenuAdd"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/fabAdd"
+                style="@style/Widget.Material3.Button.IconButton.Filled"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="false"
+                android:contentDescription="Add Clothing"
+                app:icon="@android:drawable/ic_input_add"
+                app:iconTint="@color/vestiaire_surface"
+                app:backgroundTint="@color/vestiaire_primary" />
+
+            <TextView
+                android:id="@+id/tvAddLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Add"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:textColor="@color/vestiaire_text" />
+        </LinearLayout>
+
+        <!-- SISI KANAN: MENU PROFILE -->
+        <LinearLayout
+            android:id="@+id/layoutMenuProfile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnProfile"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="false"
+                android:contentDescription="Profile"
+                app:icon="@android:drawable/ic_menu_myplaces"
+                app:iconTint="@color/vestiaire_subtext"
+                app:backgroundTint="#F5F5F5" />
+
+            <TextView
+                android:id="@+id/tvProfileLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Profile"
+                android:textSize="12sp"
+                android:textColor="@color/vestiaire_subtext" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
