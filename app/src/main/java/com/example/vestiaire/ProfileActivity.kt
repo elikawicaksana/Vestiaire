@@ -20,7 +20,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private lateinit var etUsername: EditText
     private lateinit var etEmail: EditText
+    private lateinit var etPassword: EditText
     private lateinit var tvName: TextView
+    private lateinit var tvClothingCount: TextView // 1. Tambahan Deklarasi Variabel
     private lateinit var btnUpdate: Button
     private lateinit var btnLogout: Button
 
@@ -35,17 +37,19 @@ class ProfileActivity : AppCompatActivity() {
         // Komponen UI Utama
         etUsername = findViewById(R.id.etUsername)
         etEmail = findViewById(R.id.etEmail)
+        etPassword = findViewById(R.id.etPassword)
         tvName = findViewById(R.id.tvName)
+        tvClothingCount = findViewById(R.id.tvClothingCount) // 2. Hubungkan ID XML
         btnUpdate = findViewById(R.id.btnUpdate)
         btnLogout = findViewById(R.id.btnLogout)
 
         // Hubungkan area menu navigasi bawah dari layout yang di-include
         val layoutMenuAdd = findViewById<LinearLayout>(R.id.layoutMenuAdd)
-//        val layoutMenuProfile = findViewById<LinearLayout>(R.id.layoutMenuProfile)
         val layoutClothingCount = findViewById<com.google.android.material.card.MaterialCardView>(R.id.layoutClothingCount)
 
-        // Tampilkan data user dari Firestore
+        // Tampilkan data user & jumlah clothing dari Firestore
         loadProfile()
+        fetchClothingCount() // 3. Jalankan fungsi hitung data
 
         // Tombol update
         btnUpdate.setOnClickListener {
@@ -59,27 +63,23 @@ class ProfileActivity : AppCompatActivity() {
 
         // Logika Navigasi Bawah
         layoutMenuAdd?.setOnClickListener {
-            // Karena ini halaman profile, jika klik menu Add (+), dia akan pindah ke katalog utama / halaman add
-            // Sesuai alur activity_main yang mengarahkan ke MainActivity
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             overridePendingTransition(0, 0)
-            finish() // Menutup halaman profil agar tumpukan activity rapi
+            finish()
         }
 
         layoutClothingCount?.setOnClickListener {
-            // Sudah berada di halaman profile, abaikan atau refresh data
             loadProfile()
+            fetchClothingCount() // Segarkan hitungan data saat kotak disentuh
         }
     }
 
     private fun loadProfile() {
         val currentUser = auth.currentUser ?: return
 
-        // Email langsung dipasang dari Firebase Auth session awal
         etEmail.setText(currentUser.email)
 
-        // Mengambil Username dari Cloud Firestore collection "users"
         db.collection("users").document(currentUser.uid)
             .get()
             .addOnSuccessListener { document ->
@@ -102,67 +102,73 @@ class ProfileActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateProfile() {
+    // 4. FUNGSI BARU: Mengambil dan Menampilkan Jumlah Pakaian User
+    private fun fetchClothingCount() {
         val currentUser = auth.currentUser ?: return
 
-        val username = etUsername.text.toString().trim()
-        val newEmail = etEmail.text.toString().trim()
-
-        if (username.isEmpty()) {
-            etUsername.error = "Username wajib diisi"
-            return
-        }
-
-        if (newEmail.isEmpty()) {
-            etEmail.error = "Email wajib diisi"
-            return
-        }
-
-        if (!Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-            etEmail.error = "Format email tidak valid"
-            return
-        }
-
-        // Update username di Cloud Firestore
-        val userMap = hashMapOf<String, Any>("username" to username)
-        db.collection("users").document(currentUser.uid)
-            .update(userMap)
-            .addOnSuccessListener {
-                tvName.text = "$username 👋"
-                Toast.makeText(this, "Username updated!", Toast.LENGTH_SHORT).show()
+        db.collection("clothes")
+            .whereEqualTo("userId", currentUser.uid)
+            .get()
+            .addOnSuccessListener { result ->
+                val count = result.size()
+                tvClothingCount.text = count.toString()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Gagal update username: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("FIRESTORE_COUNT", "Gagal menghitung jumlah pakaian", e)
+                tvClothingCount.text = "-"
             }
+    }
 
-        // Update email dengan verifikasi link (Fitur Firebase Auth)
-        if (newEmail != currentUser.email) {
-            currentUser.verifyBeforeUpdateEmail(newEmail)
+    private fun updateProfile() {
+        val currentUser = auth.currentUser ?: return
+        val username = etUsername.text.toString().trim()
+        val newEmail = etEmail.text.toString().trim()
+        val newPassword = etPassword.text.toString().trim()
+
+        // 1. Validasi Dasar
+        if (username.isEmpty() || newEmail.isEmpty()) {
+            Toast.makeText(this, "Isi field yang kosong", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // 2. Update Username (Selalu bisa dilakukan)
+        val userMap = hashMapOf<String, Any>("username" to username)
+        db.collection("users").document(currentUser.uid)
+            .set(userMap, com.google.firebase.firestore.SetOptions.merge())
+            .addOnSuccessListener { tvName.text = "$username 👋" }
+
+        // 3. LOGIKA EMAIL & PASSWORD
+        // Jika email berubah atau password diisi, kita harus pastikan Firebase tidak menolak
+
+        // Update Password (Jika diisi)
+        if (newPassword.isNotEmpty()) {
+            if (newPassword.length < 6) {
+                etPassword.error = "Minimal 6 karakter"
+                return
+            }
+            currentUser.updatePassword(newPassword)
                 .addOnSuccessListener {
-                    // Email benar-benar berhasil terkirim dari sisi server Firebase
-                    loadProfile()
-                    Toast.makeText(
-                        this,
-                        "Verification email sent to $newEmail. Please check your inbox and spam folder.",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    etPassword.setText("")
+                    Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show()
                 }
                 .addOnFailureListener { e ->
-                    // Menangkap error asli dari Firebase (Misal: Butuh login ulang / re-auth)
-                    Log.e("FIREBASE_AUTH", "Gagal verifikasi email baru", e)
+                    Toast.makeText(this, "Gagal update password: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+        }
 
-                    if (e.message?.contains("RECENTLY_LOGGED_IN", ignoreCase = true) == true) {
-                        Toast.makeText(
-                            this,
-                            "Keamanan: Silakan logout lalu login kembali sebelum mengubah email.",
-                            Toast.LENGTH_LONG
-                        ).show()
+        // Update Email (Jika berubah)
+        if (newEmail != currentUser.email) {
+            // Penting: Firebase membutuhkan sesi yang sangat baru untuk update email
+            currentUser.verifyBeforeUpdateEmail(newEmail)
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Email verifikasi dikirim ke $newEmail. Cek inbox/spam!", Toast.LENGTH_LONG).show()
+                }
+                .addOnFailureListener { e ->
+                    // Jika muncul error "requires-recent-login", artinya user harus Logout/Login dulu
+                    if (e.message?.contains("requires-recent-login", ignoreCase = true) == true) {
+                        Toast.makeText(this, "Sesi sudah kadaluarsa. Silakan Logout dan Login kembali untuk mengubah email.", Toast.LENGTH_LONG).show()
                     } else {
-                        Toast.makeText(
-                            this,
-                            "Gagal mengirim email verifikasi: ${e.localizedMessage}",
-                            Toast.LENGTH_LONG
-                        ).show()
+                        Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
                     }
                 }
         }
