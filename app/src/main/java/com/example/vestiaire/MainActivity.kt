@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,8 +33,16 @@ class MainActivity : AppCompatActivity() {
         rvClothing = findViewById(R.id.rvClothing)
 
         // Hubungkan area menu klik dari layout_bottom_nav yang di-include
+        val layoutMenuCatalog = findViewById<LinearLayout>(R.id.layoutMenuCatalog)
         val layoutMenuAdd = findViewById<LinearLayout>(R.id.layoutMenuAdd)
         val layoutMenuProfile = findViewById<LinearLayout>(R.id.layoutMenuProfile)
+        val btnCatalog = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCatalog)
+        val tvCatalogLabel = findViewById<TextView>(R.id.tvCatalogLabel)
+
+        val activeColor = androidx.core.content.ContextCompat.getColor(this, R.color.vestiaire_text)
+        btnCatalog?.setIconTintResource(R.color.vestiaire_text)
+        tvCatalogLabel?.setTextColor(activeColor)
+        tvCatalogLabel?.setTypeface(null, android.graphics.Typeface.BOLD)
 
         // 3. Setup RecyclerView
         rvClothing.layoutManager = LinearLayoutManager(this)
@@ -45,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         fetchClothingData()
 
         // 5. Action Navigasi Bawah Baru (Membaca klik dari layout kustom include)
+
         layoutMenuAdd?.setOnClickListener {
             startActivity(Intent(this, AddClothingActivity::class.java))
             overridePendingTransition(0, 0) // Menghilangkan animasi transisi agar smooth
@@ -53,6 +63,7 @@ class MainActivity : AppCompatActivity() {
         layoutMenuProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
             overridePendingTransition(0, 0)
+            finish()
         }
     }
 

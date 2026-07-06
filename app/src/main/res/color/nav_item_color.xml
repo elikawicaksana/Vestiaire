@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Otomatis PUTIH jika halaman aktif -->
+    <item android:state_selected="true" android:color="@color/nav_active" />
+    <!-- Otomatis ABU-ABU jika halaman tidak aktif -->
+    <item android:color="@color/nav_inactive" />
+</selector>

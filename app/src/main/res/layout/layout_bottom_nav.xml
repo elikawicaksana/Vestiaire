@@ -18,7 +18,48 @@
         android:orientation="horizontal"
         android:baselineAligned="false">
 
-        <!-- SISI KIRI: MENU ADD (+) -->
+        <!-- 1. SISI KIRI: MENU CATALOG -->
+        <LinearLayout
+            android:id="@+id/layoutMenuCatalog"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCatalog"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="0dp"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:clickable="false"
+                android:contentDescription="Catalog"
+                app:icon="@android:drawable/ic_menu_gallery"
+                app:iconSize="24dp"
+                app:iconGravity="textStart"
+                app:iconPadding="0dp"
+                app:iconTint="@color/vestiaire_subtext"
+                app:backgroundTint="@android:color/transparent" />
+
+            <TextView
+                android:id="@+id/tvCatalogLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Catalog"
+                android:textSize="12sp"
+                android:textColor="@color/vestiaire_subtext" />
+        </LinearLayout>
+
+        <!-- 2. SISI TENGAH: MENU ADD (HIGHLIGHTED FAB BLACK) -->
         <LinearLayout
             android:id="@+id/layoutMenuAdd"
             android:layout_width="0dp"
@@ -27,7 +68,8 @@
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/fabAdd"
@@ -45,8 +87,8 @@
                 app:iconSize="24dp"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
-                app:iconTint="@color/vestiaire_surface"
-                app:backgroundTint="@color/vestiaire_primary" />
+                app:iconTint="#FFFFFF"
+                app:backgroundTint="#000000" />
 
             <TextView
                 android:id="@+id/tvAddLabel"
@@ -55,11 +97,10 @@
                 android:layout_marginTop="4dp"
                 android:text="Add"
                 android:textSize="12sp"
-                android:textStyle="bold"
-                android:textColor="@color/vestiaire_text" />
+                android:textColor="@color/vestiaire_subtext" />
         </LinearLayout>
 
-        <!-- SISI KANAN: MENU PROFILE -->
+        <!-- 3. SISI KANAN: MENU PROFILE -->
         <LinearLayout
             android:id="@+id/layoutMenuProfile"
             android:layout_width="0dp"
@@ -68,7 +109,8 @@
             android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnProfile"
@@ -87,7 +129,7 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 app:iconTint="@color/vestiaire_subtext"
-                app:backgroundTint="#F5F5F5" />
+                app:backgroundTint="@android:color/transparent" />
 
             <TextView
                 android:id="@+id/tvProfileLabel"

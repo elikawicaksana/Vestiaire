@@ -1,5 +1,6 @@
 package com.example.vestiaire
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.Spinner
 import android.widget.Toast
@@ -56,6 +58,21 @@ class AddClothingActivity : AppCompatActivity() {
         btnSelectImage = findViewById(R.id.btnSelectImage)
         btnSave = findViewById(R.id.btnSave)
         progressBar = findViewById(R.id.progressBar)
+
+        val layoutMenuCatalog = findViewById<LinearLayout>(R.id.layoutMenuCatalog)
+        val layoutMenuProfile = findViewById<LinearLayout>(R.id.layoutMenuProfile)
+
+        layoutMenuCatalog?.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
+            overridePendingTransition(0, 0)
+            finish()
+        }
+
+        layoutMenuProfile?.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+            overridePendingTransition(0, 0)
+            finish()
+        }
 
         setupSpinners()
 

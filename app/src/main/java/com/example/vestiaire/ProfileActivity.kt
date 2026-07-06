@@ -44,7 +44,18 @@ class ProfileActivity : AppCompatActivity() {
         btnLogout = findViewById(R.id.btnLogout)
 
         // Hubungkan area menu navigasi bawah dari layout yang di-include
+        val layoutMenuCatalog = findViewById<LinearLayout>(R.id.layoutMenuCatalog)
         val layoutMenuAdd = findViewById<LinearLayout>(R.id.layoutMenuAdd)
+        val layoutMenuProfile = findViewById<LinearLayout>(R.id.layoutMenuProfile)
+
+        val btnProfile = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnProfile)
+        val tvProfileLabel = findViewById<TextView>(R.id.tvProfileLabel)
+
+        val activeColor = androidx.core.content.ContextCompat.getColor(this, R.color.vestiaire_text)
+        btnProfile?.setIconTintResource(R.color.vestiaire_text)
+        tvProfileLabel?.setTextColor(activeColor)
+        tvProfileLabel?.setTypeface(null, android.graphics.Typeface.BOLD)
+
         val layoutClothingCount = findViewById<com.google.android.material.card.MaterialCardView>(R.id.layoutClothingCount)
 
         // Tampilkan data user & jumlah clothing dari Firestore
@@ -61,12 +72,18 @@ class ProfileActivity : AppCompatActivity() {
             logout()
         }
 
+
         // Logika Navigasi Bawah
-        layoutMenuAdd?.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+
+        layoutMenuCatalog?.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
             overridePendingTransition(0, 0)
             finish()
+        }
+
+        layoutMenuAdd?.setOnClickListener {
+            startActivity(Intent(this, AddClothingActivity::class.java))
+            overridePendingTransition(0, 0)
         }
 
         layoutClothingCount?.setOnClickListener {

@@ -8,4 +8,9 @@
     <color name="vestiaire_text">#1A1A1A</color>
     <color name="vestiaire_subtext">#707070</color>
     <color name="vestiaire_error">#D9534F</color>
+
+    <color name="nav_active">#FFFFFF</color>
+    <color name="nav_inactive">@color/vestiaire_subtext</color>
+    <color name="nav_highlight_bg">#000000</color>
+    <color name="nav_highlight_icon">#FFFFFF</color>
 </resources>
