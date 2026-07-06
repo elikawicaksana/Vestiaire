@@ -29,32 +29,98 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Greeting -->
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- ================= HEADER SECTION (SEAMLESS GRID) ================= -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Hello,"
-                    android:textColor="@color/vestiaire_subtext"
-                    android:textSize="16sp"/>
+                    android:layout_marginTop="8dp">
 
-                <TextView
-                    android:id="@+id/tvName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=""
-                    tools:text="Username"
-                    android:textStyle="bold"
-                    android:textColor="@color/vestiaire_text"
-                    android:textSize="28sp"
-                    android:layout_marginTop="4dp"/>
+                    <!-- Sisi Kiri: Informasi Nama & Greeting -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_alignParentStart="true"
+                        android:layout_toStartOf="@id/layoutClothingCount"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="16dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Manage your wardrobe profile"
-                    android:textColor="@color/vestiaire_subtext"
-                    android:textSize="15sp"
-                    android:layout_marginTop="4dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hello,"
+                            android:textColor="@color/vestiaire_subtext"
+                            android:textSize="15sp"/>
+
+                        <TextView
+                            android:id="@+id/tvName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            tools:text="Username"
+                            android:textStyle="bold"
+                            android:textColor="@color/vestiaire_text"
+                            android:textSize="26sp"
+                            android:layout_marginTop="2dp"
+                            android:ellipsize="end"
+                            android:maxLines="1"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Manage your wardrobe"
+                            android:textColor="@color/vestiaire_subtext"
+                            android:textSize="13sp"
+                            android:layout_marginTop="2dp"/>
+                    </LinearLayout>
+
+                    <!-- Sisi Kanan: Badge Penghitung Jumlah Pakaian -->
+                    <!-- Sisi Kanan: Badge Penghitung Jumlah Pakaian (ROUNDED CORNER) -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/layoutClothingCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:cardCornerRadius="12dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="#0D000000">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:paddingHorizontal="16dp"
+                            android:paddingVertical="10dp"
+                            android:minWidth="80dp">
+
+                            <TextView
+                                android:id="@+id/tvClothingLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="CLOTHING"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/vestiaire_subtext"
+                                android:letterSpacing="0.05" />
+
+                            <TextView
+                                android:id="@+id/tvClothingCount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/vestiaire_text"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </RelativeLayout>
+                <!-- =================================================================== -->
 
                 <!-- Profile Card -->
                 <com.google.android.material.card.MaterialCardView
@@ -152,6 +218,7 @@
         </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- BOTTOM NAVBAR -->
     <include
         layout="@layout/layout_bottom_nav"
         android:layout_width="match_parent"

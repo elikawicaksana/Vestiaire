@@ -8,17 +8,20 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+        // Inisialisasi Firebase Auth dan Firestore Database
         auth = FirebaseAuth.getInstance()
+        db = FirebaseFirestore.getInstance()
 
         val etUsername = findViewById<EditText>(R.id.etUsername)
         val etEmail = findViewById<EditText>(R.id.etEmail)
@@ -27,52 +30,57 @@ class SignupActivity : AppCompatActivity() {
         val tvLogin = findViewById<TextView>(R.id.tvLogin)
 
         btnSignup.setOnClickListener {
-
             val username = etUsername.text.toString().trim()
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
-            if (email.isEmpty() || password.isEmpty()) {
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Isi semua field", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // Langkah 1: Buat akun kredensial di Firebase Authentication
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
-
                     if (task.isSuccessful) {
+                        val userId = auth.currentUser?.uid
 
-                        val uid = auth.currentUser!!.uid
+                        // Membuat struktur data profil dalam bentuk Map
+                        val userMap = hashMapOf(
+                            "username" to username,
+                            "email" to email
+                        )
 
-                        FirebaseDatabase.getInstance()
-                            .getReference("users")
-                            .child(uid)
-                            .child("username")
-                            .setValue(username)
-
-                        Toast.makeText(
-                            this,
-                            "Sign Up berhasil",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-
+                        // Langkah 2: Simpan data profil ke Cloud Firestore menggunakan UID unik user
+                        if (userId != null) {
+                            db.collection("users").document(userId)
+                                .set(userMap)
+                                .addOnSuccessListener {
+                                    Toast.makeText(this, "Registrasi berhasil", Toast.LENGTH_SHORT).show()
+                                    startActivity(Intent(this, LoginActivity::class.java))
+                                    finish()
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(
+                                        this,
+                                        "Gagal membuat data profil di database: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }
                     } else {
-
                         Toast.makeText(
                             this,
-                            "Error: ${task.exception?.message}",
+                            "Registrasi gagal: ${task.exception?.message}",
                             Toast.LENGTH_SHORT
                         ).show()
-
                     }
                 }
         }
 
         tvLogin.setOnClickListener {
-
             startActivity(Intent(this, LoginActivity::class.java))
-
+            finish()
         }
     }
 }
