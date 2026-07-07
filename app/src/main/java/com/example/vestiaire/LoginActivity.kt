@@ -19,13 +19,23 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        /*
+         * Memeriksa status sesi pengguna saat aktivitas pertama kali dibuat.
+         * Jika pengguna sudah login sebelumnya dan sesi masih valid, alur akan langsung
+         * diarahkan ke MainActivity (Auto-Login) tanpa harus melewati antarmuka login kembali.
+         */
+        if (auth.currentUser != null) {
+            startActivity(Intent(this, MainActivity::class.java))
+            finish()
+            return
+        }
+
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val tvSignup = findViewById<TextView>(R.id.tvSignup)
 
         btnLogin.setOnClickListener {
-
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
@@ -34,32 +44,28 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            /*
+             * Melakukan proses autentikasi asinkronus ke server Firebase.
+             * Task mengembalikan objek berisi token sesi baru jika kredensial cocok dengan database.
+             */
             auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
-
                     if (task.isSuccessful) {
-
                         Toast.makeText(this, "Login berhasil", Toast.LENGTH_SHORT).show()
-
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
-
                     } else {
-
                         Toast.makeText(
                             this,
                             "Login gagal: ${task.exception?.message}",
                             Toast.LENGTH_SHORT
                         ).show()
-
                     }
                 }
         }
 
         tvSignup.setOnClickListener {
-
             startActivity(Intent(this, SignupActivity::class.java))
-
         }
     }
 }

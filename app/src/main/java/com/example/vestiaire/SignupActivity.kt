@@ -19,7 +19,6 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        // Inisialisasi Firebase Auth dan Firestore Database
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
@@ -39,20 +38,26 @@ class SignupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            // Langkah 1: Buat akun kredensial di Firebase Authentication
+            /*
+             * Proses registrasi menggunakan pola penayangan asinkronus berantai (chained async).
+             * Akun dibuat terlebih dahulu di Firebase Authentication untuk mendapatkan UID unik,
+             * sebelum akhirnya UID tersebut digunakan sebagai key dokumen profil di Cloud Firestore.
+             */
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         val userId = auth.currentUser?.uid
 
-                        // Membuat struktur data profil dalam bentuk Map
                         val userMap = hashMapOf(
                             "username" to username,
                             "email" to email
                         )
 
-                        // Langkah 2: Simpan data profil ke Cloud Firestore menggunakan UID unik user
                         if (userId != null) {
+                            /*
+                             * Penggunaan .document(userId) menjamin sinkronisasi relasional antara data
+                             * kredensial auth dan entitas data profil pengguna di dalam database Firestore.
+                             */
                             db.collection("users").document(userId)
                                 .set(userMap)
                                 .addOnSuccessListener {

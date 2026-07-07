@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="90dp"> <!-- Jarak aman agar tombol save terbawah tidak tertutup menu -->
+        android:paddingBottom="90dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:textStyle="bold"
                 android:textColor="@color/vestiaire_text" />
 
-            <!-- Preview Gambar Melengkung (Card Style) -->
+            <!-- Preview Gambar -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
@@ -63,7 +63,7 @@
                 app:backgroundTint="@color/vestiaire_surface"
                 app:icon="@android:drawable/ic_menu_gallery" />
 
-            <!-- INPUT CLOTHING NAME -->
+            <!-- Input Nama Clothing -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -84,7 +84,7 @@
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- INPUT COLOR -->
+            <!-- Input Warna Clothing -->
             <com.google.android.material.textfield.TextInputLayout
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
@@ -105,7 +105,7 @@
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- PENGATURAN KATEGORI -->
+            <!-- Pengaturan Kategori -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
                 android:layout_marginTop="6dp"
                 android:background="@android:drawable/btn_dropdown" />
 
-            <!-- PENGATURAN OCCASION (ACARA) -->
+            <!-- Pengaturan Occassion -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

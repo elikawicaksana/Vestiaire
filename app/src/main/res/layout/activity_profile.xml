@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+<!-- Root Layout yang memungkinkan koordinasi dengan komponen seperti Bottom Navigation -->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,11 +9,12 @@
     android:layout_height="match_parent"
     android:background="@color/vestiaire_background">
 
-    <!-- AREA KONTEN UTAMA (Bisa di-scroll) -->
+    <!-- ConstraintLayout sebagai container utama -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- ScrollView agar seluruh halaman dapat di-scroll -->
         <ScrollView
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -23,19 +26,20 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
+            <!-- Container utama seluruh isi halaman -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- ================= HEADER SECTION (SEAMLESS GRID) ================= -->
+                <!-- ================= HEADER ================= -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp">
 
-                    <!-- Sisi Kiri: Informasi Nama & Greeting -->
+                    <!-- Bagian sapaan dan nama pengguna -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -45,13 +49,15 @@
                         android:layout_centerVertical="true"
                         android:layout_marginEnd="16dp">
 
+                        <!-- Sapaan -->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Hello,"
                             android:textColor="@color/vestiaire_subtext"
-                            android:textSize="15sp"/>
+                            android:textSize="15sp" />
 
+                        <!-- Nama pengguna (diisi dari Firebase) -->
                         <TextView
                             android:id="@+id/tvName"
                             android:layout_width="wrap_content"
@@ -63,18 +69,19 @@
                             android:textSize="26sp"
                             android:layout_marginTop="2dp"
                             android:ellipsize="end"
-                            android:maxLines="1"/>
+                            android:maxLines="1" />
 
+                        <!-- Subtitle -->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Manage your wardrobe"
                             android:textColor="@color/vestiaire_subtext"
                             android:textSize="13sp"
-                            android:layout_marginTop="2dp"/>
+                            android:layout_marginTop="2dp" />
                     </LinearLayout>
 
-                    <!-- Sisi Kanan: Badge Penghitung Jumlah Pakaian (ROUNDED CORNER) -->
+                    <!-- Card jumlah pakaian -->
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/layoutClothingCount"
                         android:layout_width="wrap_content"
@@ -86,6 +93,7 @@
                         app:strokeWidth="0dp"
                         app:cardBackgroundColor="#0D000000">
 
+                        <!-- Isi card -->
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -95,6 +103,7 @@
                             android:paddingVertical="10dp"
                             android:minWidth="80dp">
 
+                            <!-- Label -->
                             <TextView
                                 android:id="@+id/tvClothingLabel"
                                 android:layout_width="wrap_content"
@@ -105,6 +114,7 @@
                                 android:textColor="@color/vestiaire_subtext"
                                 android:letterSpacing="0.05" />
 
+                            <!-- Jumlah pakaian -->
                             <TextView
                                 android:id="@+id/tvClothingCount"
                                 android:layout_width="wrap_content"
@@ -115,13 +125,10 @@
                                 android:textColor="@color/vestiaire_text"
                                 android:layout_marginTop="2dp" />
                         </LinearLayout>
-
                     </com.google.android.material.card.MaterialCardView>
-
                 </RelativeLayout>
-                <!-- =================================================================== -->
 
-                <!-- Profile Card -->
+                <!-- ================= PROFILE CARD ================= -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -130,19 +137,21 @@
                     app:cardCornerRadius="20dp"
                     app:cardElevation="3dp">
 
+                    <!-- Isi Profile Card -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="24dp">
 
+                        <!-- Judul -->
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Profile Information"
                             android:textStyle="bold"
                             android:textSize="18sp"
-                            android:textColor="@color/vestiaire_text"/>
+                            android:textColor="@color/vestiaire_text" />
 
                         <!-- Input Username -->
                         <com.google.android.material.textfield.TextInputLayout
@@ -158,7 +167,7 @@
                                 android:layout_height="wrap_content"
                                 android:hint="Username"
                                 android:textColor="@color/vestiaire_text"
-                                android:textColorHint="@color/vestiaire_subtext"/>
+                                android:textColorHint="@color/vestiaire_subtext" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <!-- Input Email -->
@@ -176,10 +185,10 @@
                                 android:inputType="textEmailAddress"
                                 android:hint="Email"
                                 android:textColor="@color/vestiaire_text"
-                                android:textColorHint="@color/vestiaire_subtext"/>
+                                android:textColorHint="@color/vestiaire_subtext" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- Input Password Baru (Tambahan Baru) -->
+                        <!-- Input Password Baru -->
                         <com.google.android.material.textfield.TextInputLayout
                             style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
@@ -196,10 +205,10 @@
                                 android:inputType="textPassword"
                                 android:hint="New Password"
                                 android:textColor="@color/vestiaire_text"
-                                android:textColorHint="@color/vestiaire_subtext"/>
+                                android:textColorHint="@color/vestiaire_subtext" />
                         </com.google.android.material.textfield.TextInputLayout>
 
-                        <!-- Button Save -->
+                        <!-- Tombol menyimpan perubahan profil -->
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnUpdate"
                             android:layout_width="match_parent"
@@ -214,13 +223,12 @@
                             app:iconTint="@color/vestiaire_surface"
                             app:cornerRadius="16dp"
                             app:icon="@android:drawable/ic_menu_save"
-                            app:iconGravity="textStart"/>
-
+                            app:iconGravity="textStart" />
                     </LinearLayout>
-
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Logout Button (Danger Zone) -->
+                <!-- ================= LOGOUT ================= -->
+                <!-- Tombol logout akun -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLogout"
                     style="@style/Widget.Material3.Button.OutlinedButton"
@@ -233,14 +241,12 @@
                     app:cornerRadius="16dp"
                     app:strokeColor="@color/vestiaire_error"
                     app:strokeWidth="1dp"
-                    app:iconTint="@color/vestiaire_error"/>
-
+                    app:iconTint="@color/vestiaire_error" />
             </LinearLayout>
-
         </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- BOTTOM NAVBAR -->
+    <!-- Bottom Navigation yang digunakan di seluruh aplikasi -->
     <include
         layout="@layout/layout_bottom_nav"
         android:layout_width="match_parent"

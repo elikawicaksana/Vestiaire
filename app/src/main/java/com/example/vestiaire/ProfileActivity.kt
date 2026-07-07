@@ -1,17 +1,21 @@
 package com.example.vestiaire
 
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -22,7 +26,7 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var tvName: TextView
-    private lateinit var tvClothingCount: TextView // 1. Tambahan Deklarasi Variabel
+    private lateinit var tvClothingCount: TextView
     private lateinit var btnUpdate: Button
     private lateinit var btnLogout: Button
 
@@ -30,50 +34,44 @@ class ProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
-        // Inisialisasi Firebase Auth & Cloud Firestore
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        // Komponen UI Utama
         etUsername = findViewById(R.id.etUsername)
         etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
         tvName = findViewById(R.id.tvName)
-        tvClothingCount = findViewById(R.id.tvClothingCount) // 2. Hubungkan ID XML
+        tvClothingCount = findViewById(R.id.tvClothingCount)
         btnUpdate = findViewById(R.id.btnUpdate)
         btnLogout = findViewById(R.id.btnLogout)
 
-        // Hubungkan area menu navigasi bawah dari layout yang di-include
         val layoutMenuCatalog = findViewById<LinearLayout>(R.id.layoutMenuCatalog)
         val layoutMenuAdd = findViewById<LinearLayout>(R.id.layoutMenuAdd)
         val layoutMenuProfile = findViewById<LinearLayout>(R.id.layoutMenuProfile)
+        val layoutClothingCount = findViewById<MaterialCardView>(R.id.layoutClothingCount)
 
-        val btnProfile = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnProfile)
+        val btnProfile = findViewById<MaterialButton>(R.id.btnProfile)
         val tvProfileLabel = findViewById<TextView>(R.id.tvProfileLabel)
 
-        val activeColor = androidx.core.content.ContextCompat.getColor(this, R.color.vestiaire_text)
+        /*
+         * Mengubah state visual komponen navbar secara dinamis melalui runtime
+         * untuk merepresentasikan status aktif halaman profil.
+         */
+        val activeColor = ContextCompat.getColor(this, R.color.vestiaire_text)
         btnProfile?.setIconTintResource(R.color.vestiaire_text)
         tvProfileLabel?.setTextColor(activeColor)
-        tvProfileLabel?.setTypeface(null, android.graphics.Typeface.BOLD)
+        tvProfileLabel?.setTypeface(null, Typeface.BOLD)
 
-        val layoutClothingCount = findViewById<com.google.android.material.card.MaterialCardView>(R.id.layoutClothingCount)
-
-        // Tampilkan data user & jumlah clothing dari Firestore
         loadProfile()
-        fetchClothingCount() // 3. Jalankan fungsi hitung data
+        fetchClothingCount()
 
-        // Tombol update
         btnUpdate.setOnClickListener {
             updateProfile()
         }
 
-        // Tombol logout
         btnLogout.setOnClickListener {
             logout()
         }
-
-
-        // Logika Navigasi Bawah
 
         layoutMenuCatalog?.setOnClickListener {
             startActivity(Intent(this, MainActivity::class.java))
@@ -88,7 +86,7 @@ class ProfileActivity : AppCompatActivity() {
 
         layoutClothingCount?.setOnClickListener {
             loadProfile()
-            fetchClothingCount() // Segarkan hitungan data saat kotak disentuh
+            fetchClothingCount()
         }
     }
 
@@ -105,12 +103,12 @@ class ProfileActivity : AppCompatActivity() {
                     etUsername.setText(username)
 
                     if (!username.isNullOrEmpty()) {
-                        tvName.text = "$username 👋"
+                        tvName.text = username
                     } else {
-                        tvName.text = "User 👋"
+                        tvName.text = "User"
                     }
                 } else {
-                    tvName.text = "User 👋"
+                    tvName.text = "User"
                 }
             }
             .addOnFailureListener { e ->
@@ -119,7 +117,6 @@ class ProfileActivity : AppCompatActivity() {
             }
     }
 
-    // 4. FUNGSI BARU: Mengambil dan Menampilkan Jumlah Pakaian User
     private fun fetchClothingCount() {
         val currentUser = auth.currentUser ?: return
 
@@ -142,22 +139,20 @@ class ProfileActivity : AppCompatActivity() {
         val newEmail = etEmail.text.toString().trim()
         val newPassword = etPassword.text.toString().trim()
 
-        // 1. Validasi Dasar
         if (username.isEmpty() || newEmail.isEmpty()) {
             Toast.makeText(this, "Isi field yang kosong", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // 2. Update Username (Selalu bisa dilakukan)
+        /*
+         * Menggunakan SetOptions.merge() untuk memperbarui field tertentu (username)
+         * tanpa menimpa atau menghapus field lain yang sudah ada pada dokumen user terkait.
+         */
         val userMap = hashMapOf<String, Any>("username" to username)
         db.collection("users").document(currentUser.uid)
-            .set(userMap, com.google.firebase.firestore.SetOptions.merge())
-            .addOnSuccessListener { tvName.text = "$username 👋" }
+            .set(userMap, SetOptions.merge())
+            .addOnSuccessListener { tvName.text = username }
 
-        // 3. LOGIKA EMAIL & PASSWORD
-        // Jika email berubah atau password diisi, kita harus pastikan Firebase tidak menolak
-
-        // Update Password (Jika diisi)
         if (newPassword.isNotEmpty()) {
             if (newPassword.length < 6) {
                 etPassword.error = "Minimal 6 karakter"
@@ -173,15 +168,16 @@ class ProfileActivity : AppCompatActivity() {
                 }
         }
 
-        // Update Email (Jika berubah)
         if (newEmail != currentUser.email) {
-            // Penting: Firebase membutuhkan sesi yang sangat baru untuk update email
+            /*
+             * Firebase Auth mendeteksi perubahan email sebagai tindakan sensitif. Jika token sesi
+             * kedaluwarsa (requires-recent-login), pengguna diwajibkan untuk re-autentikasi (logout-login ulang).
+             */
             currentUser.verifyBeforeUpdateEmail(newEmail)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Email verifikasi dikirim ke $newEmail. Cek inbox/spam!", Toast.LENGTH_LONG).show()
                 }
                 .addOnFailureListener { e ->
-                    // Jika muncul error "requires-recent-login", artinya user harus Logout/Login dulu
                     if (e.message?.contains("requires-recent-login", ignoreCase = true) == true) {
                         Toast.makeText(this, "Sesi sudah kadaluarsa. Silakan Logout dan Login kembali untuk mengubah email.", Toast.LENGTH_LONG).show()
                     } else {

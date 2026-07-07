@@ -1,5 +1,6 @@
 package com.example.vestiaire
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,16 +27,22 @@ class ClothingAdapter(private val clothingList: List<ClothingItem>) :
         val clothing = clothingList[position]
         holder.tvName.text = clothing.name
 
-        // Glide to load image from URL
+        /*
+         * Menggunakan library Glide untuk manajemen memori dan pemuatan gambar (image loading) secara asinkronus.
+         * Penempatan placeholder bawaan sistem bertujuan mencegah layout berkedip (blinking) saat biner media sedang diunduh.
+         */
         Glide.with(holder.itemView.context)
             .load(clothing.imageUrl)
-            .placeholder(android.R.drawable.ic_menu_gallery) // Placeholder while loading
+            .placeholder(android.R.drawable.ic_menu_gallery)
             .into(holder.ivImage)
 
-        // Taruh kode ini di baris terakhir di dalam fungsi onBindViewHolder milikmu
+        /*
+         * Mengirimkan data entitas objek secara terurai melalui mekanisme Explicit Intent Extras.
+         * Hal ini memicu navigasi menuju detail item spesifik berdasarkan data posisi indeks yang diikat (bound).
+         */
         holder.itemView.setOnClickListener {
             val context = holder.itemView.context
-            val intent = android.content.Intent(context, ClothingDetailActivity::class.java).apply {
+            val intent = Intent(context, ClothingDetailActivity::class.java).apply {
                 putExtra("CLOTHING_ID", clothing.id)
                 putExtra("CLOTHING_NAME", clothing.name)
                 putExtra("CLOTHING_COLOR", clothing.color)

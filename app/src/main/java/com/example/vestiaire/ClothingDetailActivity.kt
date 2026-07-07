@@ -1,5 +1,6 @@
 package com.example.vestiaire
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -10,7 +11,9 @@ import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,15 +25,12 @@ class ClothingDetailActivity : AppCompatActivity() {
     private lateinit var etDetailName: EditText
     private lateinit var etDetailColor: EditText
     private lateinit var tvDetailTitle: TextView
-
     private lateinit var tvDetailCategory: TextView
     private lateinit var tvDetailOccasion: TextView
     private lateinit var spinnerDetailCategory: Spinner
     private lateinit var spinnerDetailOccasion: Spinner
-
     private lateinit var layoutReadMode: LinearLayout
     private lateinit var layoutEditMode: LinearLayout
-
     private lateinit var btnBack: Button
     private lateinit var btnEditMode: Button
     private lateinit var btnUpdate: Button
@@ -42,7 +42,6 @@ class ClothingDetailActivity : AppCompatActivity() {
 
     private var clothingId: String = ""
     private var imageUrl: String = ""
-
     private var oldName = ""
     private var oldColor = ""
     private var oldCategory = ""
@@ -56,16 +55,12 @@ class ClothingDetailActivity : AppCompatActivity() {
         etDetailName = findViewById(R.id.etDetailName)
         etDetailColor = findViewById(R.id.etDetailColor)
         tvDetailTitle = findViewById(R.id.tvDetailTitle)
-
         tvDetailCategory = findViewById(R.id.tvDetailCategory)
         tvDetailOccasion = findViewById(R.id.tvDetailOccasion)
-
         spinnerDetailCategory = findViewById(R.id.spinnerDetailCategory)
         spinnerDetailOccasion = findViewById(R.id.spinnerDetailOccasion)
-
         layoutReadMode = findViewById(R.id.layoutReadMode)
         layoutEditMode = findViewById(R.id.layoutEditMode)
-
         btnBack = findViewById(R.id.btnBack)
         btnEditMode = findViewById(R.id.btnEditMode)
         btnUpdate = findViewById(R.id.btnUpdate)
@@ -95,7 +90,6 @@ class ClothingDetailActivity : AppCompatActivity() {
             toggleEditMode(false)
         }
         btnUpdate.setOnClickListener { updateClothingData() }
-
         btnDelete.setOnClickListener { confirmDelete() }
     }
 
@@ -107,6 +101,10 @@ class ClothingDetailActivity : AppCompatActivity() {
         spinnerDetailOccasion.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, occasions)
     }
 
+    /*
+     * Mengatur visibilitas komponen UI (state visibility) secara bergantian
+     * untuk memisahkan alur interaksi teks statis (Read) dan form masukan data (Edit).
+     */
     private fun toggleEditMode(isEditMode: Boolean) {
         etDetailName.isEnabled = isEditMode
         etDetailColor.isEnabled = isEditMode
@@ -130,6 +128,11 @@ class ClothingDetailActivity : AppCompatActivity() {
         }
     }
 
+    /*
+     * Sinkronisasi data lokal (cache activity runtime) ke elemen view.
+     * Berfungsi memulihkan status awal form jika pengguna membatalkan proses edit (Cancel).
+     */
+    @Suppress("UNCHECKED_CAST")
     private fun resetFieldsToOldData() {
         etDetailName.setText(oldName)
         etDetailColor.setText(oldColor)
@@ -156,7 +159,7 @@ class ClothingDetailActivity : AppCompatActivity() {
             return
         }
 
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle("Confirm Changes")
             .setMessage("Are you sure you want to update this clothing info?")
             .setPositiveButton("Yes") { _, _ ->
@@ -188,7 +191,7 @@ class ClothingDetailActivity : AppCompatActivity() {
     }
 
     private fun confirmDelete() {
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle("Delete Clothing")
             .setMessage("Are you sure you want to delete this item? This action cannot be undone.")
             .setPositiveButton("Delete") { _, _ ->
@@ -198,6 +201,11 @@ class ClothingDetailActivity : AppCompatActivity() {
             .show()
     }
 
+    /*
+     * Eksekusi pembersihan data berantai secara asinkronus.
+     * Dokumen di Firestore akan dihapus terlebih dahulu, kemudian jika sukses, sistem akan mencari
+     * referensi URL berkas gambar di Firebase Storage untuk membersihkan sisa penyimpanan biner lokal media.
+     */
     private fun deleteClothing() {
         db.collection("clothes").document(clothingId)
             .delete()

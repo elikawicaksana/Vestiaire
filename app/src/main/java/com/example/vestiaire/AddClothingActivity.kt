@@ -33,7 +33,6 @@ class AddClothingActivity : AppCompatActivity() {
 
     private var imageUri: Uri? = null
 
-    // Initialize Firebase Services
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
@@ -49,7 +48,6 @@ class AddClothingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_clothing)
 
-        // Connect UI
         ivPreview = findViewById(R.id.ivPreview)
         etName = findViewById(R.id.etName)
         etColor = findViewById(R.id.etColor)
@@ -86,12 +84,10 @@ class AddClothingActivity : AppCompatActivity() {
     }
 
     private fun setupSpinners() {
-        // ENUM options for Category
         val categories = arrayOf("Tops", "Bottoms", "Dresses", "Outerwear", "Shoes", "Accessories")
         val categoryAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categories)
         spinnerCategory.adapter = categoryAdapter
 
-        // ENUM options for Occasion
         val occasions = arrayOf("Casual", "Formal", "Sport", "Party", "Work")
         val occasionAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, occasions)
         spinnerOccasion.adapter = occasionAdapter
@@ -104,7 +100,6 @@ class AddClothingActivity : AppCompatActivity() {
         val occasion = spinnerOccasion.selectedItem.toString()
         val userId = auth.currentUser?.uid
 
-        // Validasi teks tetap wajib
         if (name.isEmpty() || color.isEmpty()) {
             Toast.makeText(this, "Please fill all text fields", Toast.LENGTH_SHORT).show()
             return
@@ -117,17 +112,23 @@ class AddClothingActivity : AppCompatActivity() {
         progressBar.visibility = View.VISIBLE
         btnSave.isEnabled = false
 
-        // CEK KONDISI: Apakah user memilih gambar atau tidak?
+        /*
+         * Alur percabangan penanganan aset media lokal.
+         * Jika `imageUri` tersedia, sistem wajib menyelesaikan tugas asinkronus unggah biner ke Firebase Storage
+         * untuk mendapatkan URL publik (downloadUrl) sebelum mengeksekusi penulisan dokumen ke Cloud Firestore.
+         */
         if (imageUri != null) {
-            // KONDISI 1: User milih gambar -> Upload ke Storage dulu
             val fileName = UUID.randomUUID().toString() + ".jpg"
             val storageRef = storage.reference.child("clothing_images/$fileName")
 
             storageRef.putFile(imageUri!!)
                 .addOnSuccessListener {
+                    /*
+                     * Task bersarang (nested task) untuk mengambil URL token media yang baru saja diunggah.
+                     * URL ini bertindak sebagai jembatan referensi gambar di dalam dokumen teks Firestore.
+                     */
                     storageRef.downloadUrl.addOnSuccessListener { uri ->
                         val imageUrl = uri.toString()
-                        // Lanjut simpan ke Firestore membawa link gambar
                         saveToFirestore(userId, name, category, occasion, color, imageUrl)
                     }
                 }
@@ -137,15 +138,16 @@ class AddClothingActivity : AppCompatActivity() {
                     Toast.makeText(this, "Image Upload Failed: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            // KONDISI 2: User TIDAK milih gambar -> Langsung tembak ke Firestore
-            // Parameter imageUrl kita isi dengan string kosong ("")
+            /*
+             * Jika objek `imageUri` null (user tidak memilih gambar), runtime langsung melompati
+             * fasa upload Firebase Storage dan langsung mendaftarkan entitas teks ke Firestore dengan string kosong.
+             */
             saveToFirestore(userId, name, category, occasion, color, "")
         }
     }
 
     private fun saveToFirestore(userId: String, name: String, category: String, occasion: String, color: String, imageUrl: String) {
-
-        val currentTime = Timestamp.now() // Ambil waktu saat ini
+        val currentTime = Timestamp.now()
 
         val clothingItem = ClothingItem(
             userId = userId,
@@ -158,6 +160,11 @@ class AddClothingActivity : AppCompatActivity() {
             updatedAt = currentTime
         )
 
+        /*
+         * Menggunakan metode .add() untuk membuat dokumen baru di dalam koleksi "clothes".
+         * Firestore akan secara otomatis menghasilkan auto-generated ID berupa token string acak
+         * sebagai pengidentifikasi utama (document path ID) dari item pakaian tersebut.
+         */
         db.collection("clothes")
             .add(clothingItem)
             .addOnSuccessListener {

@@ -25,41 +25,41 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // 1. Initialize Firebase
         auth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()
 
-        // 2. Connect UI (Hanya menghubungkan komponen yang benar-benar ada di activity_main.xml)
         rvClothing = findViewById(R.id.rvClothing)
 
-        // Hubungkan area menu klik dari layout_bottom_nav yang di-include
         val layoutMenuCatalog = findViewById<LinearLayout>(R.id.layoutMenuCatalog)
         val layoutMenuAdd = findViewById<LinearLayout>(R.id.layoutMenuAdd)
         val layoutMenuProfile = findViewById<LinearLayout>(R.id.layoutMenuProfile)
         val btnCatalog = findViewById<com.google.android.material.button.MaterialButton>(R.id.btnCatalog)
         val tvCatalogLabel = findViewById<TextView>(R.id.tvCatalogLabel)
 
+        /* * Mengubah warna ikon dan gaya teks secara dinamis melalui kode
+         * untuk menandakan bahwa menu "Catalog" sedang dalam status aktif/dipilih.
+         */
         val activeColor = androidx.core.content.ContextCompat.getColor(this, R.color.vestiaire_text)
         btnCatalog?.setIconTintResource(R.color.vestiaire_text)
         tvCatalogLabel?.setTextColor(activeColor)
         tvCatalogLabel?.setTypeface(null, android.graphics.Typeface.BOLD)
 
-        // 3. Setup RecyclerView
         rvClothing.layoutManager = LinearLayoutManager(this)
         clothingList = arrayListOf()
         adapter = ClothingAdapter(clothingList)
         rvClothing.adapter = adapter
 
-        // 4. Fetch data from Firestore
         fetchClothingData()
-
-        // 5. Action Navigasi Bawah Baru (Membaca klik dari layout kustom include)
 
         layoutMenuAdd?.setOnClickListener {
             startActivity(Intent(this, AddClothingActivity::class.java))
-            overridePendingTransition(0, 0) // Menghilangkan animasi transisi agar smooth
+            overridePendingTransition(0, 0)
         }
 
+        /* * finish() digunakan untuk menghancurkan MainActivity dari tumpukan (stack) aktivitas,
+         * sehingga ketika pengguna menekan tombol kembali di ProfileActivity,
+         * aplikasi langsung keluar dan tidak kembali ke halaman utama yang kosong.
+         */
         layoutMenuProfile?.setOnClickListener {
             startActivity(Intent(this, ProfileActivity::class.java))
             overridePendingTransition(0, 0)
@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /* * onResume dipanggil setiap kali aktivitas berinteraksi kembali dengan pengguna.
+     * Penempatan fetchClothingData di sini memastikan data katalog selalu diperbarui otomatis
+     * setelah pengguna menambahkan pakaian baru dari AddClothingActivity.
+     */
     override fun onResume() {
         super.onResume()
         fetchClothingData()
@@ -76,18 +80,27 @@ class MainActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
 
         if (currentUser != null) {
+            /* * Melakukan query ke Firestore untuk mengambil dokumen dari koleksi "clothes"
+             * yang field "userId"-nya cocok dengan UID pengguna yang sedang login saat ini.
+             */
             db.collection("clothes")
                 .whereEqualTo("userId", currentUser.uid)
                 .get()
                 .addOnSuccessListener { result ->
+                    // Membersihkan list lama untuk mencegah duplikasi data saat memuat ulang
                     clothingList.clear()
 
+                    /* * Memetakan setiap dokumen Firestore menjadi objek beralur tipe data "ClothingItem".
+                     * document.id diambil secara manual karena ID dokumen Firestore
+                     * berada di luar struktur bodi field data dokumen itu sendiri.
+                     */
                     for (document in result) {
                         val clothingItem = document.toObject(ClothingItem::class.java)
                         clothingItem.id = document.id
                         clothingList.add(clothingItem)
                     }
 
+                    // Memaksa RecyclerView untuk menggambar ulang komponen UI sesuai perubahan data terbaru
                     adapter.notifyDataSetChanged()
                 }
                 .addOnFailureListener { exception ->
