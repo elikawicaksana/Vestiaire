@@ -1,10 +1,11 @@
 package com.example.vestiaire
 
 import com.google.firebase.Timestamp
+import com.google.firebase.firestore.Exclude
 
 data class ClothingItem(
-    var id: String = "",        // Untuk itemId (Primary Key)
-    var userId: String = "",    // Foreign Key dari User yang login
+    @get:Exclude var id: String = "",
+    var userId: String = "",
     var name: String = "",
     var category: String = "",
     var occasion: String = "",
